@@ -1,0 +1,250 @@
+﻿@model Web.ViewModel.UserGroupViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div id="customValidation">
+    </div>
+    
+    <div class="form-horizontal">
+        <h2>User Group Creation</h2>
+        <p id="resultMessage"></p>
+        
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.userGroup.UserGroupName, new { @class = "control-label col-md-3 red" })
+            </div>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.userGroup.UserGroupName)
+                @Html.ValidationMessageFor(model => model.userGroup.UserGroupName)
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.userGroup.UserGroupDescription, new { @class = "control-label col-md-3 red" })
+            </div>
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.userGroup.UserGroupDescription)
+                @Html.ValidationMessageFor(model => model.userGroup.UserGroupDescription)
+            </div>
+            </div>
+
+        <div class="form-group">
+            <div>
+                <label class="control-label col-md-3 red">
+                    Employee Id:
+                </label>
+                <div class="col-md-9">
+                    @Html.TextBox("EmployeeId")
+                </div>
+            </div>
+            
+        </div>
+        <table class="table table-bordered table-hover table-striped">
+            <tr>
+                <td>Activate User
+                </td>
+                <td></td>
+                <td>Selected User
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <ul id="list1">
+                            @foreach (var user in Model.lstUsers)
+                            {
+                                <li>
+                                    <label for="@user.UserID" class="control-label col-md-2">@user.FirstName</label>
+                                    <input type="checkbox" name="SelectedGroups" value="@user.UserID" id="@user.UserID" />
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </td>
+                <td style="text-align: center">
+                    <input type="button" id="btnAdd" value=">" style="width: 50px;" /><br />
+                    <input type="button" id="btnAddAll" value=">>" style="width: 50px;" /><br />
+                    <input type="button" id="btnRemove" value="<" style="width: 50px;" /><br />
+                    <input type="button" id="btnRemoveAll" value="<<" style="width: 50px;" />
+                </td>
+                <td style="text-align: center">
+                    <ul id="list2"></ul>
+                </td>
+            </tr>
+        </table>
+        <p>
+            <input type="button" value="Create" id="btnCreateUserGroup" />
+            <input id="btnResetUser" type="Button" value="Reset" class="cancel" />
+        </p>
+    </div>
+}
+
+
+@section Scripts {
+    @Styles.Render("~/Content/themes/base/css")
+       @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var list = [];
+            $('#btnAdd').click(function (e) {
+                if ($('#list1').find("input:checkbox:checked").length == 0) {
+                    alert("Please select atleast(1) user");
+                    return false;
+                }
+                $('#list1').find("input:checkbox:checked").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list2');
+                    list.push($(this).val());
+                });
+                $('#output').html(list.join(", "));
+                e.preventDefault();
+            });
+
+            $('#btnAddAll').click(function (e) {
+                $('#list1').find("input:checkbox").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list2');
+                    list.push($(this).val());
+                });
+                $('#output').html(list.join(", "));
+                e.preventDefault();
+            });
+
+            $('#btnRemove').click(function (e) {
+                if ($('#list2').find("input:checkbox:checked").length == 0) {
+                    alert("Please select atleast(1) user");
+                    return false;
+                }
+                $('#list2').find("input:checkbox:checked").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list1');
+                    list.push($(this).val());
+                });
+                $('#output').html(list.join(", "));
+                e.preventDefault();
+            });
+
+            $('#btnRemoveAll').click(function (e) {
+                $('#list2').find("input:checkbox").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list1');
+                    list.push($(this).val());
+                });
+                $('#output').html(list.join(", "));
+                e.preventDefault();
+            });
+
+            $("#btnCreateUserGroup").click(function () {
+                if (validate()) {
+                    var userGroup = {};
+                    userGroup.UserGroupName = $("#userGroup_UserGroupName").val();
+                    userGroup.UserGroupDescription = $("#userGroup_UserGroupDescription").val();
+                    userGroup.lstUserGroupAssign = [];
+                    for (var i = 0; i < list.length; i++) {
+                        userGroup.lstUserGroupAssign.push({ 'UserID': list[i] });
+                    }
+
+                    $.ajax({
+                        url: '/UserGroup/Create',
+                        dataType: "json",
+                        type: "POST",
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(userGroup),
+                        async: true,
+                        processData: false,
+                        cache: false,
+                        success: function (data) {
+                            if (data.errorMessage.length > 0) {
+                                var html = '<div class="validation-summary-errors"><ul>';
+                                $.each(data.errorMessage, function (key, Value) {
+                                    html += '<li>' + Value + '</li>';
+                                });
+                                html += '</ul></div>';
+                                $("#customValidation").html(html);
+                            }
+                            else {
+                                $('input[type="text"]').val('');
+                                $("#resultMessage").addClass("label-success").show().text('Record inserted successfully');
+                            }
+                        },
+                        error: function (xhr) {
+                            if (xhr.status == 200) {
+                                $('input[type="text"]').val('');
+                                $("#resultMessage").addClass("label-success").show().text('Record inserted successfully ');
+                            }
+                            else {
+                                $("#resultMessage").addClass("label-warning").show().text('Error occured ');
+                            }
+                        }
+                    })
+                }
+
+            });
+
+            $("#EmployeeId").autocomplete({
+                selectFirst: true,
+                minLength: 2,
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/UserGroup/StartSearch",
+                        type: "POST",
+                        dataType: "json",
+                        cache: false,
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.EmployeeID,
+                                    value: item.EmployeeID
+                                };
+                            }));
+                        }
+                    });
+                },
+                messages: { noResults: "", results: "" },
+                select: function (event, ui) {
+                    $('#EmployeeId').val(ui.item.label);
+                    $.ajax({
+                        url: "/UserGroup/StartSearch",
+                        type: "POST",
+                        dataType: "json",
+                        cache: false,
+                        data: { term: ui.item.label },
+                        success: function (data) {
+                            $('#list1').empty();
+                            var html='';
+                            for (var i = 0; i < data.length; i++) {
+                                html = '<li><label for="' + data[i].UserID + '" class="control-label col-md-2">' + data[i].FirstName + '</label>';
+                                html += '<input type="checkbox" name="SelectedGroups" value="' + data[i].UserID + '"  id="' + data[i].UserID + '"' + "/></li>"
+                            }
+                            $('#list1').html(html);
+                        }
+                    });
+                    return false;
+                }
+            });
+
+            $("#btnResetUser").click(function () {
+                $('input[type="text"]').val('');
+                $('#list2').empty();
+                $('#list1').empty();
+                $.get('/UserGroup/LoadUser', function (data) {
+                    var html = '';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<li><label for="' + data[i].UserID + '" class="control-label col-md-2">' + data[i].FirstName + '</label>';
+                        html += '<input type="checkbox" name="SelectedGroups" value="' + data[i].UserID + '"  id="' + data[i].UserID + '"' + "/></li>"
+                    }
+                    $('#list1').html(html);
+                });
+            });
+
+        });
+    </script>
+}

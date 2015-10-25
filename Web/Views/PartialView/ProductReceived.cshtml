@@ -1,0 +1,60 @@
+﻿@model Model.SampleReceive
+    <table style="border-collapse: collapse;">
+        @for (int i = 0; i < @ViewBag.NoOfProductReceived; i++)
+        {
+          int  count = i;  
+            if (i == 0)
+            {
+              <tr>
+               <th>
+                   <span>S.no.</span>
+                </th>
+                <th>
+                    @Html.LabelFor(model =>  model.lstProductRecieved[0].ProductID)
+                </th>
+                  <th>
+                    @Html.LabelFor(model => model.lstProductRecieved[0].Quantity, new { @class="ProductName"})
+                </th>
+                <th>
+                   @Html.LabelFor(model => model.lstProductRecieved[0].UOMID)
+                </th>
+              </tr>
+            }   
+            <tr>
+                <td>
+                    @Html.Label((count + 1).ToString())
+                     @Html.HiddenFor(model => model.lstProductRecieved[i].ProductRecievedID)
+                </td>
+                <td>
+                    @if (this.Model != null && this.Model.lstProductRecieved[i].ProductRecievedID > 0)
+                    {
+                         @Html.DropDownListFor(model =>  model.lstProductRecieved[i].ProductID, (@ViewBag.Products as IEnumerable<SelectListItem>).AsEnumerable().Select(p => new SelectListItem { Value = p.Value , Text = p.Text.ToString(), Selected = (p.Value.ToString() == this.Model.lstProductRecieved[i].ProductID.ToString()) }), new { @class = "dropdown-medium" })
+                    }
+                    else
+                    {
+                         @Html.DropDownListFor(model => model.lstProductRecieved[i].ProductID,(SelectList)@ViewBag.Products,new {@class = "dropdown-medium" }) 
+                    }
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.lstProductRecieved[i].Quantity, new {@class="allownumericwithdecimal"})
+                </td>
+                <td>
+                    @if (this.Model != null && this.Model.lstProductRecieved[i].ProductRecievedID > 0)
+                    {
+                         @Html.DropDownListFor(model =>  model.lstProductRecieved[i].UOMID, (@ViewBag.UOMS as IEnumerable<SelectListItem>).AsEnumerable().Select(p => new SelectListItem { Value = p.Value , Text = p.Text.ToString(), Selected = (p.Value.ToString() == this.Model.lstProductRecieved[i].UOMID.ToString()) }), new { @class = "dropdown-medium" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.lstProductRecieved[i].UOMID,(SelectList)@ViewBag.UOMS,new {@class = "dropdown-medium" })
+                    }
+                     
+                </td>
+            </tr> 
+        }
+    </table>
+
+
+
+    
+
+

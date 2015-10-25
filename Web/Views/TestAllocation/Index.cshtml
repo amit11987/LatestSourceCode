@@ -1,0 +1,360 @@
+﻿@model Web.ViewModel.TestAllocationViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("", "", FormMethod.Get, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+      @Html.ValidationSummary(true)
+    <div id="customValidation">
+    </div>
+    <div class="form-horizontal">
+        <h2 class="red">Test Allocation</h2>
+        <p id="resultMessage"></p>
+        <div class="form-group">
+            @Html.LabelFor(model => model.testAllocation.SampleReceiveID, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.testAllocation.SRID)
+                <input type="button" id="btnSearch" value="Search" />
+            </div>
+        </div>
+        <div id="lblHeader" class="form-group" style="display:none;">
+            <h3 class="red">Tests Perform on labels</h3>
+        </div>
+        <div id="view" class="form-group">
+        </div>
+    </div>
+    
+    <div id="dvSampleDetails" class="modal fade">
+        <div id="dialogContent" class="modal-dialog">
+            @Html.Partial("~/Views/TestAllocation/SampleDetailsSearch.cshtml")
+        </div>
+    </div>
+   
+}
+@section Scripts {
+   
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnSearch").click(function () {
+                $('#dvSampleDetails').modal('show');
+            });
+            var startDate = new Date();
+            var FromEndDate = new Date();
+
+            $('#FromDate').datepicker({
+                format: "mm/dd/yyyy"
+            }).on('changeDate', function (selected) {
+                startDate = new Date(selected.date.valueOf());
+                startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+                $('#ToDate').datepicker('setStartDate', startDate);
+            });
+            $('#ToDate').datepicker({
+                format: "mm/dd/yyyy"
+            }).on('changeDate', function (selected) {
+                FromEndDate = new Date(selected.date.valueOf());
+                FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+                $('#FromDate').datepicker('setEndDate', FromEndDate);
+            });
+            var SRID = $("#testAllocation_SRID");
+            $("#testAllocation_SRID").on("keypress keyup blur", function (event) {
+                if ((event.which == 13)) {
+                    if (SRID.val() == "") {
+                        alert("Please Enter Sample Receive ID");
+                        return false;
+                    }
+                    RenderView(SRID.val());
+                }
+            });
+            function RenderView(SRID) {
+                /* Request the partial view with .get request. */
+                $.post('/TestAllocation/RenderView/', { SRID: $("#testAllocation_SRID").val() }, function (data) {
+                    /* data is the pure html returned from action method, load it to your page */
+                    $("#lblHeader").show();
+                    $('#view').html(data);
+                    /* little fade in effect */
+                    $('#view').fadeIn('fast');
+                });
+            }
+
+            $("#btnSearchSampleReceive").click(function () {
+                var sampleReceivingModel = {
+                    FromDate: new Date($("#FromDate").val()),
+                    ToDate: new Date($("#ToDate").val()),
+                    SRID: "Sample1,",
+                    lstSampleReceiving: null
+                };
+
+                $.ajax({
+                    url: "/TestAllocation/Details",
+                    type: "Post",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(sampleReceivingModel),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            $("#listProduct").empty().css('display', '');
+                            $('<option>').text(value.SRID).val(value.SRID).appendTo("#listProduct");
+                        });
+                    }
+                });
+            });
+
+            $('#dvSampleDetails').on('hidden.bs.modal', function () {
+                $(this).find("input,textarea,select").val('').end();
+                $("#listProduct").empty().css('display', 'none');
+
+            });
+
+            $("#btnOk").click(function () {
+                if ($("#listProduct").val() == "" || $("#listProduct").val() == null) {
+                    alert("Please select sample id");
+                    return false;
+                }
+                $("#testAllocation_SRID").val($("#listProduct option:selected").val());
+                $('#dvSampleDetails').modal('hide');
+                RenderView(SRID.val());
+            });
+
+            var list = [];
+            var userGroupList = [];
+            $('body').on('click', '#btnAdd', function (e) {
+                if ($('#list1').find("input:checkbox:checked").length == 0) {
+                    alert("Please select atleast(1) usergroup");
+                    return false;
+                }
+                $('#list1').find("input:checkbox:checked").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list2');
+                    userGroupList.push($(this).closest("li").find("label").text());
+                    list.push($(this).val());
+                });
+
+                e.preventDefault();
+            });
+
+            $('body').on('click', '#btnAddAll', function (e) {
+                $('#list1').find("input:checkbox").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list2');
+                    userGroupList.push($(this).closest("li").find("label").text());
+                    list.push($(this).val());
+                });
+
+                e.preventDefault();
+            });
+
+            $('body').on('click', '#btnRemove', function (e) {
+                if ($('#list2').find("input:checkbox:checked").length == 0) {
+                    alert("Please select atleast(1) user");
+                    return false;
+                }
+                $('#list2').find("input:checkbox:checked").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list1');
+                    // Find and remove item from an array
+                    var i = list.indexOf($(this).val());
+                    var j = userGroupList.indexOf($(this).closest("li").find("label").text());
+                    userGroupList.push();
+                    if (i != -1) {
+                        list.splice(i, 1);
+                        userGroupList.splice(j, 1);
+                    }
+                });
+
+                e.preventDefault();
+            });
+
+            $('body').on('click', '#btnRemoveAll', function (e) {
+                $('#list2').find("input:checkbox").each(function () {
+                    $(this).prop('checked', false);
+                    $(this).parent().appendTo('#list1');
+                });
+                list.length = 0;
+                userGroupList.length = 0;
+                e.preventDefault();
+            });
+
+            var testAllocations = [];
+            $('body').on('click', '.allocated', function (e) {
+                var tr = $(this).parents('tr:first');
+                var index = $(this).parent().parent().index() - 1;
+                $.ajax({
+                    url: '/TestAllocation/RenderUserGroup',
+                    type: "GET",
+                    async: true,
+                    cache: false,
+                    success: function (data) {
+                        $("#dvUserGroupDetails").html('');
+                        $("#dvUserGroupDetails").html(data);
+                        $("#hdnID").val(index);
+                        $('#dvUserGroupDetails').modal('show');
+                    }
+                });
+            });
+
+            $('body').on('click', '#btnUserGroup', function (e) {
+                if (list.length == 0) {
+                    alert("Please select atleast(1) user group");
+                }
+               
+                rowindex = $("#hdnID").val()
+                testAllocations = testAllocations.filter(function (el) {
+                    return el.index !== rowindex;
+                });
+              
+                testAllocations.push({ index: rowindex, userGroup: list });
+                $('#dvUserGroupDetails').modal('hide');
+                $('#lblAllocated' + rowindex).text(userGroupList.join(','));
+                $('#lblAllocated' + rowindex).attr('Ids', list.join(','));
+                list.length = 0;
+                userGroupList.length = 0;
+            });
+
+          
+          
+            $('body').on('click', '#btnTestAllocation', function (e) {
+                var noofTest = $("#tblTestAllocation  > tbody > tr").length - 1;
+                if (validate() && customValidation(noofTest)) {
+                    var lstTestAllocations = [];
+                    for (var i = 0; i < noofTest; i++) {
+                        var testAllocationUserGroup = [];
+                        var testAllocation = {
+                            TargetDate: new Date($("#lstTestAllocation_" + i + "__TargetDate").val()),
+                            SampleReceiveID: $("#lstTestAllocation_" + i + "__SampleReceiveID").val(),
+                            SRID: $("#lstTestAllocation_" + i + "__SRID").val(),
+                            TestID: $("#lstTestAllocation_" + i + "__TestID").val(),
+                            Status: $("#lstTestAllocation_" + i + "__Status").val(),
+                            AllocatedTo: $("#lstTestAllocation_" + i + "__AllocatedTo").val(),
+                            QtyOfProduct: $("#lstTestAllocation_" + i + "__QtyOfProduct").val(),
+                            UOMID: $("#lstTestAllocation_" + i + "__UOMID").val()
+                        }
+                        var userGroupIDS = $("#lblAllocated" + i).attr('Ids') != undefined ? $("#lblAllocated" + i).attr('Ids').split(',') : '';
+                        for (var j = 0; j < userGroupIDS.length; j++) {
+                            testAllocationUserGroup.push({ UserGroupID: userGroupIDS [j]});
+                        }
+                        testAllocation.testAllocationUserGroup = testAllocationUserGroup;
+                        lstTestAllocations.push(testAllocation);
+                    }
+
+                    $.ajax({
+                        url: '/TestAllocation/Index',
+                        dataType: "json",
+                        type: "POST",
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(lstTestAllocations),
+                        async: true,
+                        processData: false,
+                        cache: false,
+                        success: function (data) {
+                            if (data.errorMessage.length > 0) {
+                                var html = '<div class="validation-summary-errors"><ul>';
+                                $.each(data.errorMessage, function (key, Value) {
+                                    html += '<li>' + Value + '</li>';
+                                });
+                                html += '</ul></div>';
+                                $("#customValidation").html(html);
+                            }
+                            else {
+                                $("#resultMessage").addClass("label-success").show().text('Record inserted successfully');
+                                $("#tblTestAllocation").html('');
+                                $("#lblHeader").hide();
+                            }
+                        },
+                        error: function (xhr) {
+                            if (xhr.status == 200) {
+                                $(".dropdown-medium").val(0);
+                                $('input[type="text"]').val('');
+                                $("#resultMessage").addClass("label-success").show().text('Record inserted successfully');
+                                $("label[id^='lblAllocated']").text("NA");
+                            }
+                            else {
+                                $("#resultMessage").addClass("label-warning").show().text('Error occured ');
+                            }
+                        }
+                    })
+                }
+            });
+
+            
+            $('body').on('click', '#btnResetAllocation', function (e) {
+                $('input[type="text"]').val('');
+                $(".validation-summary-errors").css("display", "none");
+                $(".input-validation-error").removeClass("input-validation-error");
+                $(".field-validation-error").children().remove();
+                $("#resultMessage").removeClass("label-success").removeClass("label-warning").text('').hide();
+                $(".dropdown-medium").val(0);
+                $("#lblHeader").show();
+                $("label[id^='lblAllocated']").text("NA");
+            });
+
+            $('body').on('focus.autocomplete', '#userGroup_UserGroupName', function (e) {
+                $(this).autocomplete({
+                    selectFirst: true,
+                    minLength: 2,
+                    source: function (request, response) {
+                        $.ajax({
+                            url: "/TestAllocation/StartSearch",
+                            type: "POST",
+                            dataType: "json",
+                            cache: false,
+                            data: { term: request.term },
+                            success: function (data) {
+                                response($.map(data, function (item) {
+                                    return {
+                                        label: item.UserGroupName,
+                                        value: item.UserGroupName
+                                    };
+                                }));
+                            },
+                            error: function (xhr) {
+                            }
+
+                        });
+                    },
+                    messages: { noResults: "", results: "" },
+                    select: function (event, ui) {
+                        $('#userGroup_UserGroupName').val(ui.item.label);
+                        $.ajax({
+                            url: "/TestAllocation/StartSearch",
+                            type: "POST",
+                            dataType: "json",
+                            cache: false,
+                            data: { term: ui.item.label },
+                            success: function (data) {
+                                $('#list1').empty();
+                                var html = '';
+                                for (var i = 0; i < data.length; i++) {
+                                    html = '<li><label for="' + data[i].UserGroupID + '" class="control-label col-md-4">' + data[i].UserGroupName + '</label>';
+                                    html += '<input type="checkbox" name="SelectedGroups" value="' + data[i].UserGroupID + '"  id="' + data[i].UserGroupID + '"' + "/></li>"
+                                }
+                                $('#list1').html(html);
+                            }
+                        });
+                        return false;
+                    }
+                });
+            });
+
+
+        });
+
+        function customValidation(noofTest) {
+            var IsValid = true;
+            for (var i = 0; i < noofTest; i++) {
+                if ($("#lstTestAllocation_" + i + "__QtyOfProduct").val() == "") {
+                    $("#lstTestAllocation_" + i + "__QtyOfProduct").addClass("input-validation-error");
+                    IsValid = false;
+                }
+                else {
+                    $(this).removeClass("input-validation-error");
+                    IsValid = true;
+                }
+            }
+            return IsValid;
+        }
+    </script>
+}

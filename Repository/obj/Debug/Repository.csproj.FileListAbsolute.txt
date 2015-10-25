@@ -1,0 +1,51 @@
+F:\Maitry\Solution\Repository\bin\Debug\Repository.dll.config
+F:\Maitry\Solution\Repository\bin\Debug\Repository.dll
+F:\Maitry\Solution\Repository\bin\Debug\Repository.pdb
+F:\Maitry\Solution\Repository\bin\Debug\EntityFramework.dll
+F:\Maitry\Solution\Repository\bin\Debug\EntityFramework.SqlServer.dll
+F:\Maitry\Solution\Repository\bin\Debug\Model.dll
+F:\Maitry\Solution\Repository\bin\Debug\EntityFramework.xml
+F:\Maitry\Solution\Repository\bin\Debug\EntityFramework.SqlServer.xml
+F:\Maitry\Solution\Repository\bin\Debug\Model.pdb
+F:\Maitry\Solution\Repository\obj\Debug\Repository.csprojResolveAssemblyReference.cache
+F:\Maitry\Solution\Repository\obj\Debug\Repository.dll
+F:\Maitry\Solution\Repository\obj\Debug\Repository.pdb
+F:\Maitry\Solution\Repository\bin\Debug\System.Web.Mvc.dll
+F:\Matrey\Repository\bin\Debug\Repository.dll.config
+F:\Matrey\Repository\bin\Debug\Repository.dll
+F:\Matrey\Repository\bin\Debug\Repository.pdb
+F:\Matrey\Repository\bin\Debug\EntityFramework.dll
+F:\Matrey\Repository\bin\Debug\EntityFramework.SqlServer.dll
+F:\Matrey\Repository\bin\Debug\System.Web.Mvc.dll
+F:\Matrey\Repository\bin\Debug\EntityFramework.xml
+F:\Matrey\Repository\bin\Debug\EntityFramework.SqlServer.xml
+F:\Matrey\Repository\bin\Debug\Model.pdb
+F:\Matrey\Repository\obj\Debug\Repository.csprojResolveAssemblyReference.cache
+F:\Matrey\Repository\obj\Debug\Repository.dll
+F:\Matrey\Repository\obj\Debug\Repository.pdb
+F:\Matrey\Repository\bin\Debug\Model.dll
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\Repository.dll.config
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\Repository.dll
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\Repository.pdb
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.dll
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.SqlServer.dll
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\Model.dll
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.xml
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.SqlServer.xml
+C:\project-matrey\Matrey1710\Matrey\Repository\bin\Debug\Model.pdb
+C:\project-matrey\Matrey1710\Matrey\Repository\obj\Debug\Repository.csprojResolveAssemblyReference.cache
+C:\project-matrey\Matrey1710\Matrey\Repository\obj\Debug\Repository.dll
+C:\project-matrey\Matrey1710\Matrey\Repository\obj\Debug\Repository.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\Repository.dll.config
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\Repository.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\Repository.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\Model.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\System.Web.Mvc.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.xml
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Debug\Model.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\obj\Debug\Repository.csprojResolveAssemblyReference.cache
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\obj\Debug\Repository.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\obj\Debug\Repository.pdb

@@ -1,0 +1,57 @@
+﻿@model Model.Test
+<table class="table table-bordered">
+    @for (int i = 0; i < @ViewBag.NumberOfParametersRequired; i++)
+    {
+        int count = i;
+        if (i == 0)
+        {
+            <tr>
+                <th>
+                    @Html.Label("Parameter")
+                </th>
+                <th>
+                    @Html.LabelFor(model => model.TestParameters[0].Caption)
+                </th>
+                <th>
+                    @Html.LabelFor(model => model.TestParameters[0].TPID)
+                </th>
+                <th>
+                    @Html.LabelFor(model => model.TestParameters[0].Description)
+                </th>
+                <th>
+                    @Html.LabelFor(model => model.TestParameters[0].FieldTypeID)
+                </th>
+            </tr>
+        }
+        <tr>
+            <td>
+                @Html.Label("Parameter " + (count + 1))
+            </td>
+            <td>
+                @Html.HiddenFor(model => model.TestParameters[i].TestParameterID)
+                @Html.TextBoxFor(model => model.TestParameters[i].Caption, new { @class = "form-control" })
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.TestParameters[i].TPID, new { @class = "form-control" })
+            </td>
+            <td>
+                @Html.TextAreaFor(model => model.TestParameters[i].Description, new { rows = "1", cols = "50", @class= "form-control" })
+            </td>
+            <td>
+                @if (this.Model != null && this.Model.TestParameters[i].TestID > 0)
+                {
+                    @Html.DropDownListFor(model => model.TestParameters[i].FieldTypeID, (@ViewBag.FieldTypes as IEnumerable<SelectListItem>).AsEnumerable().Select(p => new SelectListItem { Value = p.Value, Text = p.Text.ToString(), Selected = (p.Value.ToString() == this.Model.TestParameters[i].FieldTypeID.ToString()) }), new { @class = "dropdown-medium fieldType form-control" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.TestParameters[i].FieldTypeID, (SelectList)@ViewBag.FieldTypes, new { @class = "dropdown-medium fieldType form-control" })
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+
+

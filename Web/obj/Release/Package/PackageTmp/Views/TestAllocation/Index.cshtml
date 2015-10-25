@@ -1,0 +1,118 @@
+﻿@model Web.ViewModel.TestAllocationViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <h2 class="red">Test Allocation</h2>
+        <p id="resultMessage"></p>
+        <div class="form-group">
+            @Html.LabelFor(model => model.testAllocation.SampleReceiveID, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.testAllocation.SRID)
+                <input type="button" id="btnSearch" value="Search" />
+            </div>
+        </div>
+        <div class="form-group">
+            <h3 class="red">Tests Perform on labels</h3>
+        </div>
+        <div id="view" class="form-group">
+        </div>
+    </div>
+    
+    <div id="dvSampleDetails" class="modal fade">
+        <div id="dialogContent" class="modal-dialog">
+            @Html.Partial("~/Views/TestAllocation/SampleDetailsSearch.cshtml")
+        </div>
+    </div>
+   
+}
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnSearch").click(function () {
+                $('#dvSampleDetails').modal('show');
+            });
+            var startDate = new Date();
+            var FromEndDate = new Date();
+
+            $('#FromDate').datepicker({
+                format: "mm/dd/yyyy"
+            }).on('changeDate', function (selected) {
+                startDate = new Date(selected.date.valueOf());
+                startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+                $('#ToDate').datepicker('setStartDate', startDate);
+            });
+            $('#ToDate').datepicker({
+                format: "mm/dd/yyyy"
+            }).on('changeDate', function (selected) {
+                FromEndDate = new Date(selected.date.valueOf());
+                FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+                $('#FromDate').datepicker('setEndDate', FromEndDate);
+            });
+            var SRID = $("#testAllocation_SRID");
+            $("#testAllocation_SRID").on("keypress keyup blur", function (event) {
+                if ((event.which == 13)) {
+                    if (SRID.val() == "") {
+                        alert("Please Enter Sample Receive ID");
+                        return false;
+                    }
+                    RenderView(SRID.val());
+                }
+            });   
+            function RenderView(SRID) {
+                /* Request the partial view with .get request. */
+                $.post('/TestAllocation/RenderView/', { SRID: $("#testAllocation_SRID").val() }, function (data) {
+                    /* data is the pure html returned from action method, load it to your page */
+                    $('#view').html(data);
+                    /* little fade in effect */
+                    $('#view').fadeIn('fast');
+                });
+            }
+
+            $("#btnSearchSampleReceive").click(function () {
+                var sampleReceivingModel = {
+                    FromDate : new Date($("#FromDate").val()),
+                    ToDate: new Date($("#ToDate").val()),
+                    SRID: "Sample1",
+                    lstSampleReceiving : null
+                };
+
+                $.ajax({
+                    url: "/TestAllocation/Details",
+                    type: "Post",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(sampleReceivingModel),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            $("#listProduct").empty().css('display','');
+                            $('<option>').text(value.SRID).val(value.SRID).appendTo("#listProduct");
+                        });
+                    }
+                });
+            });
+
+            $('#dvSampleDetails').on('hidden.bs.modal', function () {
+                $(this).find("input,textarea,select").val('').end();
+                $("#listProduct").empty().css('display','none');
+               
+            });
+           
+            $("#btnOk").click(function () {
+                if ($("#listProduct").val() == "" || $("#listProduct").val() == null) {
+                    alert("Please select sample id");
+                    return false;
+                }
+                $("#testAllocation_SRID").val($("#listProduct option:selected").val());
+                $('#dvSampleDetails').modal('hide');
+                RenderView(SRID.val());
+            });
+        });
+    </script>
+}

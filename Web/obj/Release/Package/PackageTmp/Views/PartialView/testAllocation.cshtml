@@ -1,0 +1,150 @@
+﻿@model  Web.ViewModel.TestAllocationViewModel
+<table style="border-collapse: collapse;">
+    @for (int i = 0; i < this.Model.lstTestAllocation.Count; i++)
+    {
+        int count = i;
+        if (i == 0)
+        {
+        <tr>
+            <th>
+                <span>S.no.</span>
+            </th>
+            <th>
+               
+                @Html.LabelFor(model => model.lstTestAllocation[0].TestName)
+            </th>
+            <th>
+                @Html.LabelFor(model => model.lstTestAllocation[0].TargetDate)
+            </th>
+            <th>
+                @Html.LabelFor(model => model.lstTestAllocation[0].Status)
+            </th>
+            <th>
+                @Html.LabelFor(model => model.lstTestAllocation[0].AllocatedTo)
+            </th>
+            <th>
+                @Html.LabelFor(model => model.lstTestAllocation[0].QtyOfProduct)
+            </th>
+        </tr>
+        }   
+        <tr>
+            <td>
+                 @Html.HiddenFor(model => model.lstTestAllocation[i].TestID)
+                @Html.HiddenFor(model => model.lstTestAllocation[i].SampleReceiveID)
+                  @Html.HiddenFor(model => model.lstTestAllocation[i].SRID)
+                @Html.Label((count + 1).ToString())
+            </td>
+            <td>
+                @Html.Label(this.Model.lstTestAllocation[i].TestName)
+            </td>
+            <td>
+                @Html.EditorFor(model => model.lstTestAllocation[i].TargetDate)
+            </td>
+            <td>
+                @Html.DropDownListFor(model => model.lstTestAllocation[i].Status, (SelectList)@ViewBag.TestAllocationStatus, new { @class = "dropdown-medium" })
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.lstTestAllocation[i].AllocatedTo, new { @class = "textbox-small" })
+            </td>
+            <td>
+                <div style="width: 300px;">
+                    @Html.TextBoxFor(model => model.lstTestAllocation[i].QtyOfProduct, new { @class = "textbox-small" })
+                    @Html.DropDownListFor(model => model.lstTestAllocation[i].UOMID, (SelectList)@ViewBag.UOMS, new { @class = "dropdown-medium" })
+                </div>
+            </td>
+        </tr> 
+    }
+</table>
+<p>
+    <br />
+    <input id="btnTestAllocation" type="Button" value="Submit" />
+    <input id="btnResetAllocation" type="Button" value="Reset" class="cancel" />
+</p>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[type="datetime"]').datepicker({
+            format: "mm/dd/yyyy",
+            startDate: new Date()
+        });
+        var NoOfTestRequired = parseInt('@ViewBag.NoOfTestRequired');
+        $("#btnResetAllocation").click(function () {
+           // $('input[type="text"]').val('');
+            $(".validation-summary-errors").css("display", "none");
+            $(".input-validation-error").removeClass("input-validation-error");
+            $(".field-validation-error").children().remove();
+            $("#resultMessage").removeClass("label-success").removeClass("label-warning").text('').hide();
+            $(".dropdown-medium").val(0);
+           
+            for (var i = 0; i < NoOfTestRequired; i++) {
+                $("#lstTestAllocation_" + i + "__AllocatedTo").val('NA');
+            }
+        });
+
+        $("#btnTestAllocation").click(function () {
+
+            var lstTestAllocations = [];
+            for (var i = 0; i < NoOfTestRequired; i++) {
+                var testAllocation = {
+                    TargetDate: new Date($("#lstTestAllocation_" + i + "__TargetDate").val()),
+                    SampleReceiveID: $("#lstTestAllocation_" + i + "__SampleReceiveID").val(),
+                    SRID: $("#lstTestAllocation_" + i + "__SRID").val(),
+                    TestID: $("#lstTestAllocation_" + i + "__TestID").val(),
+                    Status: $("#lstTestAllocation_" + i + "__Status").val(),
+                    AllocatedTo: $("#lstTestAllocation_" + i + "__AllocatedTo").val(),
+                    QtyOfProduct: $("#lstTestAllocation_" + i + "__QtyOfProduct").val(),
+                    UOMID: $("#lstTestAllocation_" + i + "__UOMID").val(),
+                }
+                lstTestAllocations.push(testAllocation);
+            }
+
+            $.ajax({
+                url: '/TestAllocation/Index',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(lstTestAllocations),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    if (data.errorMessage.length > 0) {
+                        var html = '<div class="validation-summary-errors"><ul>';
+                        $.each(data.errorMessage, function (key, Value) {
+                            html += '<li>' + Value + '</li>';
+                        });
+                        html += '</ul></div>';
+                        $("#customValidation").html(html);
+                    }
+                    else {
+                        $(".dropdown-medium").val(0);
+                        $('input[type="text"]').val('');
+                        $("#resultMessage").addClass("label-success").show().text('Record inserted successfully');
+                        for (var i = 0; i < '@ViewBag.NoOfTestRequired'; i++) {
+                            $("#lstTestAllocation_" + i + + "__AllocatedTo").val('NA');
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status == 200) {
+                        $(".dropdown-medium").val(0);
+                        $('input[type="text"]').val('');
+                        $("#resultMessage").addClass("label-success").show().text('Record inserted successfully');
+                        for (var i = 0; i < '@ViewBag.NoOfTestRequired'; i++) {
+                            $("#lstTestAllocation_" + i + + "__AllocatedTo").val('NA');
+                        }
+                    }
+                    else {
+                        $("#resultMessage").addClass("label-warning").show().text('Error occured ');
+                    }
+                }
+            })
+
+        });
+
+    });
+</script>
+
+
+
+
+

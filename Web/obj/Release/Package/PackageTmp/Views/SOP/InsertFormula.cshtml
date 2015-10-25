@@ -1,0 +1,65 @@
+﻿@model Model.SOP
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Insert Formula</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            @Html.Label("Parameter", new { @class = "control-label col-md-4 red" })
+            <div class="col-md-8">
+                @Html.ListBox("Parameter", Enumerable.Range(1, (int)@ViewBag.NumberOfParametersRequired).Select(i => new SelectListItem { Value = i.ToString(), Text = "Parameter " + i.ToString() }))
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Formula, new { @class = "control-label col-md-4 red" })
+            <div class="col-md-8">
+                @Html.TextArea("Formula",Convert.ToString(TempData.Peek("formula")))
+                @Html.ValidationMessageFor(model => model.Formula)
+                <br />
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" id="btnSaveFormula">Save</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSaveFormula").click(function () {
+            if ($("#Formula").val() == "") {
+                alert("Please enter fromula");
+                return false;
+            }
+            var formula = { 'formula': $("#Formula").val() };
+            $.ajax({
+                url: '/SOP/InsertFormula',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ 'formula': $("#Formula").val() }),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    $("#Formula").val('');
+                    $('#dialogDiv').modal('hide');
+                },
+                error: function (xhr) {
+                    if (xhr.status == 200) {
+                        $("#Formula").val('');
+                        $('#dialogDiv').modal('hide');
+                    }
+                    console.log("error");
+                }
+            });
+        });
+
+        $('#myModal').on('hide', function (e) {
+            e.preventDefault();
+        });
+    });
+</script>

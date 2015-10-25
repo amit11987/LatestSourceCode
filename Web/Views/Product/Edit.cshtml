@@ -1,0 +1,74 @@
+﻿@model Model.Product
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <h2 class="red">Edit Product</h2>
+         @Html.HiddenFor(model => model.ProductID)
+        <hr />
+        @if (@ViewBag.ResultMessage != null && ((string)@ViewBag.ResultMessage).Contains("Error"))
+        {
+            <p class="label-warning">@ViewBag.ResultMessage</p>
+        }
+        else if (@ViewBag.ResultMessage != null)
+        {
+            <p class="label-success">@ViewBag.ResultMessage</p>
+        }
+        @Html.ValidationSummary(true)
+        <div class="form-group">
+            
+            @Html.LabelFor(model => model.ProductName, new { @class = "control-label col-md-2 red" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductName)
+                @Html.ValidationMessageFor(model => model.ProductName)
+                @Html.Hidden("hdnProductName", this.Model.ProductName, new { @id = "hdnProductName" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.PID, new { @class = "control-label col-md-2 red" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PID)
+                @Html.ValidationMessageFor(model => model.PID)
+                @Html.Hidden("hdnPID", this.Model.PID, new { @id = "hdnPID" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductDescription, new { @class = "control-label col-md-2 red" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.ProductDescription, new { rows = "6", cols = "50" })
+                @Html.ValidationMessageFor(model => model.ProductDescription)
+                @Html.Hidden("hdnProductDescription", this.Model.ProductDescription, new { @id = "hdnProductDescription" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-10">
+                <input id="btnEditProduct" type="submit" value="Update" />
+                <input id="btnResetProduct" type="Button" value="Reset" class="cancel" />
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnResetProduct").click(function () {
+                $('#ProductName').val($("#hdnProductName").val());
+                $('#PID').val($("#hdnPID").val());
+                $('#ProductDescription').val($("#hdnProductDescription").val());
+                $(".validation-summary-errors").css("display", "none");
+                $(".input-validation-error").removeClass("input-validation-error");
+                $(".field-validation-error").children().remove();
+                $("P.label-success").remove();
+                $("P.label-warning").remove();
+            });
+        });
+    </script>
+}

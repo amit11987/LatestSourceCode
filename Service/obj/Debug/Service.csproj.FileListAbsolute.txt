@@ -1,0 +1,47 @@
+F:\Maitry\Solution\Service\bin\Debug\Service.dll
+F:\Maitry\Solution\Service\bin\Debug\Service.pdb
+F:\Maitry\Solution\Service\bin\Debug\Model.dll
+F:\Maitry\Solution\Service\bin\Debug\Repository.dll
+F:\Maitry\Solution\Service\bin\Debug\EntityFramework.dll
+F:\Maitry\Solution\Service\bin\Debug\Model.pdb
+F:\Maitry\Solution\Service\bin\Debug\Repository.pdb
+F:\Maitry\Solution\Service\bin\Debug\EntityFramework.xml
+F:\Maitry\Solution\Service\obj\Debug\Service.csprojResolveAssemblyReference.cache
+F:\Maitry\Solution\Service\obj\Debug\Service.dll
+F:\Maitry\Solution\Service\obj\Debug\Service.pdb
+F:\Maitry\Solution\Service\bin\Debug\System.Web.Mvc.dll
+F:\Matrey\Service\bin\Debug\Service.dll
+F:\Matrey\Service\bin\Debug\Service.pdb
+F:\Matrey\Service\bin\Debug\Repository.dll
+F:\Matrey\Service\bin\Debug\EntityFramework.dll
+F:\Matrey\Service\bin\Debug\System.Web.Mvc.dll
+F:\Matrey\Service\bin\Debug\Model.pdb
+F:\Matrey\Service\bin\Debug\Repository.pdb
+F:\Matrey\Service\bin\Debug\EntityFramework.xml
+F:\Matrey\Service\obj\Debug\Service.csprojResolveAssemblyReference.cache
+F:\Matrey\Service\obj\Debug\Service.dll
+F:\Matrey\Service\obj\Debug\Service.pdb
+F:\Matrey\Service\bin\Debug\Model.dll
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\Service.dll
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\Service.pdb
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\Model.dll
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\Repository.dll
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\EntityFramework.dll
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\Model.pdb
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\Repository.pdb
+C:\project-matrey\Matrey1710\Matrey\Service\bin\Debug\EntityFramework.xml
+C:\project-matrey\Matrey1710\Matrey\Service\obj\Debug\Service.csprojResolveAssemblyReference.cache
+C:\project-matrey\Matrey1710\Matrey\Service\obj\Debug\Service.dll
+C:\project-matrey\Matrey1710\Matrey\Service\obj\Debug\Service.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\Service.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\Service.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\Model.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\Repository.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\EntityFramework.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\System.Web.Mvc.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\Model.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\Repository.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\bin\Debug\EntityFramework.xml
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\obj\Debug\Service.csprojResolveAssemblyReference.cache
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\obj\Debug\Service.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Service\obj\Debug\Service.pdb

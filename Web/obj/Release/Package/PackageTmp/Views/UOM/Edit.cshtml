@@ -1,0 +1,189 @@
+﻿@model Model.UOM
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    <div class="form-horizontal">
+        <h2>Edit UOM</h2>
+        <p id="resultMessage"></p>
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.UOMID)
+        <div class="form-group">
+            @Html.Hidden("hdnUOMName", this.Model.UOMName)
+            @Html.LabelFor(model => model.UOMName, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.UOMName)
+                @Html.ValidationMessageFor(model => model.UOMName)
+            </div>
+        </div>
+        <div class="form-group" id="dvStandardUOM">
+            @Html.Hidden("hdnStandardUOM", this.Model.StandardUOM)
+            @Html.LabelFor(model => model.StandardUOM, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                <select id="StandardUOM" class="dropdown-medium">
+                    <option value="">--Select--</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Hidden("hdnISStandardUOM", this.Model.ISStandardUOM)
+            @Html.LabelFor(model => model.ISStandardUOM, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.CheckBoxFor(model => model.ISStandardUOM)
+            </div>
+        </div>
+        <div class="form-group" id="dvUOMMapping">
+            @Html.Hidden("hdnUOMMapping", this.Model.UOMMapping)
+            @Html.LabelFor(model => model.UOMMapping, new { @class = "control-label col-md-3 red", @id = "lblUOMMapping" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.UOMMapping)
+                <span class="red" id="spMapping">= [1 Standard UOM]</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-9">
+                <input id="btnEditUOM" type="button" value="Update" />
+                <input id="btnResetUOM" type="button" value="Reset" class="cancel" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            LoadUOM();
+
+            if ($("#ISStandardUOM").is(":checked")) {
+                $("#dvStandardUOM").hide();
+                $("#dvUOMMapping").hide();
+            }
+            else {
+                $("#lblUOMMapping").text("[1 " + $("#UOMName").val() + " ] *");
+            }
+
+            $("#ISStandardUOM").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#dvStandardUOM").hide();
+                    $("#dvUOMMapping").hide();
+                }
+                else {
+                    $("#dvStandardUOM").show();
+                    $("#dvUOMMapping").show();
+                }
+            });
+
+            $("#StandardUOM").change(function () {
+                $("#spMapping").text("=[1 " + $("#StandardUOM option:selected").text() + " ]");
+                if ($("#UOMName").val() != "") {
+                    $("#lblUOMMapping").text("[1 " + $("#UOMName").val() + " ] *");
+                }
+            });
+
+            $("#UOMName").keyup(function () {
+                $("#UOMName").val() != "" ? $("#lblUOMMapping").text("[1 " + $("#UOMName").val() + " ] *") : $("#lblUOMMapping").text("1 [UOM Name]*");
+            });
+
+            $("#btnEditUOM").click(function () {
+                if (validate()) {
+                    if (!$("#ISStandardUOM").is(":checked") && ('@ViewBag.UOMNames' == null || '@ViewBag.UOMNames' == "")) {
+                    alert("Please first create standard UOM");
+                    return false;
+                }
+                if (!$("#ISStandardUOM").is(":checked")) {
+                    if ($("#StandardUOM").val() == "") {
+                        alert("Please Select Standard UOM");
+                        return false;
+                    }
+                    if ($("#UOMMapping").val() == 0) {
+                        alert("Please enter mapping Details");
+                        return false;
+                    }
+                }
+
+                var uom = {
+                    UOMID: $("#UOMID").val(),
+                    UOMName: $("#UOMName").val(),
+                    StandardUOM: $("#ISStandardUOM").is(":checked") ? "" : $("#StandardUOM").val(),
+                    ISStandardUOM: $("#ISStandardUOM").is(":checked"),
+                    UOMMapping: $("#ISStandardUOM").is(":checked") ? 0 : $("#UOMMapping").val()
+                };
+
+                $.ajax({
+                    url: '/UOM/Edit',
+                    dataType: "json",
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(uom),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        LoadUOM();
+                        $("#resultMessage").addClass("label-success").show().text('Record updated successfully ');
+                    },
+                    error: function (xhr) {
+                        if (xhr.status == 200) {
+                            LoadUOM();
+                            $("#resultMessage").addClass("label-success").show().text('Record updated successfully ');
+                        }
+                        else {
+                            $("#resultMessage").addClass("label-warning").show().text('Error occured ');
+                        }
+                    }
+                })
+            }
+        });
+
+        $("#btnResetUOM").click(function () {
+            $('#UOMName').val($("#hdnUOMName").val());
+            $('#StandardUOM').val($("#hdnStandardUOM").val());
+            $('#UOMMapping').val($("#hdnUOMMapping").val());
+            $('#ISStandardUOM').prop('checked', true);
+            if ($("#ISStandardUOM").is(":checked")) {
+                $("#dvStandardUOM").hide();
+                $("#dvUOMMapping").hide();
+            }
+            else {
+                $("#lblUOMMapping").text("[1 " + $("#UOMName").val() + " ] *");
+            }
+            $(".validation-summary-errors").css("display", "none");
+            $(".input-validation-error").removeClass("input-validation-error");
+            $(".field-validation-error").children().remove();
+            $("#resultMessage").removeClass("label-success").removeClass("label-warning").text('').hide();
+        });
+    });
+    
+
+    function LoadUOM() {
+        $.ajax({
+            url: "/UOM/LoadUOM",
+            type: "Get",
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var opt;
+                    if (i == 0) {
+                        $('#StandardUOM').empty();
+                        opt = new Option("--Select--", "");
+                        $('#StandardUOM').append(opt);
+                    }
+                    opt = new Option(data[i].UOMName, data[i].UOMID);
+                    $('#StandardUOM').append(opt);
+                    $('#StandardUOM').val($("#hdnStandardUOM").val());
+                    if ($("#StandardUOM option:selected").val() > 0) {
+                        $("#spMapping").text("=[1 " + $("#StandardUOM option:selected").text() + " ]");
+                    }
+                }
+            }
+        });
+    }
+
+    </script>
+}
+

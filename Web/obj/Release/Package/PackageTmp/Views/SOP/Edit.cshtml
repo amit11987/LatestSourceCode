@@ -1,0 +1,163 @@
+﻿@model Model.SOP
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit</h2>
+@using (Html.BeginForm("Edit", "SOP", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmCreateSop" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form-horizontal">
+        <h2 class="red">Edit SOP</h2>
+         <hr />
+         @if (@ViewBag.ResultMessage != null &&((string)@ViewBag.ResultMessage).Contains("Error"))
+         {
+            <p class="label-warning">@ViewBag.ResultMessage</p>
+         }
+         else if (@ViewBag.ResultMessage != null)
+         {
+             <p class="label-success">@ViewBag.ResultMessage</p>
+         }
+        <div class="form-group">
+            @Html.LabelFor(model => model.SOPName, new { @class = "control-label col-md-2 red" })
+            @Html.HiddenFor(model => model.SOPID)
+             @Html.HiddenFor(model => model.FileName)
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SOPName)
+                @Html.ValidationMessageFor(model => model.SOPName)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.SID, new { @class = "control-label col-md-2 red" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SID)
+                @Html.ValidationMessageFor(model => model.SID)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.SOPDescription, new { @class = "control-label col-md-2 red mceNoEditor" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.SOPDescription, new { rows = "6", cols = "50" })
+                @Html.ValidationMessageFor(model => model.SOPDescription)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.TestID, new { @class = "control-label col-md-2 red " })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.TestID, ViewBag.TestList as IEnumerable<SelectListItem>, "--Select--", new { @class = "dropdown-medium" })
+                @Html.ValidationMessageFor(model => model.TestID)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.SOPHtml, new { @class = "control-label col-md-2 red" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.SOPHtml, new { cols = "85", rows = "8", @class = "tinymce-editor" })
+                &nbsp;&nbsp;&nbsp;
+                @Html.ActionLink("Insert Formula", "ShowDialog", "SOP", new { }, new { @id = "insertFormula" });
+                @Html.ValidationMessageFor(model => model.SOPHtml)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.FileName, new { @class = "control-label col-md-2 red" })
+            <div class="col-md-5">
+                <input type="file" name="upload" id="upload"  />
+            </div>
+            @* <div class="col-md-5">
+                   <input type="button" id="Upload" value="Upload" />
+              </div>*@
+        </div>
+        <p>
+            <input id="btnEditSOP" type="submit" value="Update" />
+            <input id="btnResetSOP" type="Button" value="Reset" class="cancel" />
+        </p>
+    </div>
+    
+    <div id='dialogDiv' class='modal fade'>
+        <div id='dialogContent' class="modal-dialog">
+        </div>
+    </div>
+}
+@section Scripts {
+    <script src="~/Scripts/tinymce/tinymce.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnResetSOP").click(function () {
+                var SOPID = $("#SOPID").val();
+                $.get("/SOP/GetSOPDetails/" + SOPID, function (data) {
+                    alert(data.SOPID);
+                });
+
+                $(".validation-summary-errors").css("display", "none");
+                $(".input-validation-error").removeClass("input-validation-error");
+                $(".field-validation-error").children().remove();
+                $("P.label-success").remove();
+                $("P.label-warning").remove();
+            });
+
+            var frmCreateSop = $('#frmCreateSop');
+            $.data(frmCreateSop[0], 'validator').settings.ignore = "null";
+
+            tinymce.init({
+                selector: "textarea.tinymce-editor", // Select all textarea with the class tinymce-editor
+                height: 200,
+                setup: function (editor) {
+                    editor.on('keyUp', function () {
+                        tinyMCE.triggerSave();
+
+                        if (!$.isEmptyObject(frmCreateSop.validate().submitted))
+                            frmCreateSop.validate().form();
+                    });
+                },
+                relative_urls: false,
+                plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table contextmenu paste"
+                ],
+                theme: "modern",
+                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+            });
+
+            $("#insertFormula").on('click', function (event) {
+                var testId = $("#TestID").val();
+                event.preventDefault();
+                if (testId == "") {
+                    alert("Please select test");
+                    return false;
+                }
+
+                $('#dialogContent').load(this.href, { 'testId': testId },function () {
+                    $('#dialogDiv').modal('show');
+                });
+                return false;
+            });
+
+        });
+
+        $("#upload").on('change', function () {
+            var formData = new FormData();
+            var totalFiles = document.getElementById("upload").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("upload").files[i];
+                formData.append("upload", file);
+            }
+            $.ajax({
+                type: "POST",
+                url: '/SOP/Upload',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                },
+                error: function (error) {
+                }
+            });
+        });
+
+    </script>
+
+}

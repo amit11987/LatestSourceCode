@@ -1,0 +1,162 @@
+﻿@model Model.User
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form-horizontal">
+        <h2 class="red">Create User</h2>
+        <hr />
+        @if (@ViewBag.ResultMessage != null && ((string)@ViewBag.ResultMessage).Contains("Error"))
+        {
+            <p class="label-warning">@ViewBag.ResultMessage</p>
+        }
+        else if (@ViewBag.ResultMessage != null)
+        {
+            <p class="label-success">@ViewBag.ResultMessage</p>
+        }
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.FirstName, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FirstName)
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.LastName, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LastName)
+                @Html.ValidationMessageFor(model => model.LastName)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.EmployeeID, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.EmployeeID)
+                @Html.ValidationMessageFor(model => model.EmployeeID)
+            </div>
+            <div class="col-md-1">
+                @Html.EditorFor(model => model.UseEmployeeIDAsLoginID) &nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="col-md-5">
+                @Html.LabelFor(model => model.UseEmployeeIDAsLoginID, new { @class = "control-label col-md-8 red" })
+            </div>
+            <div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.LoginID, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LoginID)
+                @Html.ValidationMessageFor(model => model.LoginID)
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.EmailID, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EmailID)
+                @Html.ValidationMessageFor(model => model.EmailID)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.PhoneNo, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PhoneNo)
+                @Html.ValidationMessageFor(model => model.PhoneNo)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.EmergencyContactNo, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EmergencyContactNo)
+                @Html.ValidationMessageFor(model => model.EmergencyContactNo)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.Password, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.PasswordFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                @Html.LabelFor(model => model.ConfirmPassword, new { @class = "control-label col-md-2 red" })
+            </div>
+            <div class="col-md-10">
+                @Html.PasswordFor(model => model.ConfirmPassword)
+                @Html.ValidationMessageFor(model => model.ConfirmPassword)
+            </div>
+        </div>
+    </div>
+    <p>
+        <input type="submit" value="Create" />
+        <input id="btnResetUser" type="Button" value="Reset" class="cancel" />
+    </p>
+
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnResetUser").click(function () {
+                $('input[type="text"]').val('');
+                $('input[type="Password"]').val('');
+                $('input[type="email"]').val('');
+                $('input[type="tel"]').val('');
+
+                $("#UseEmployeeIDAsLoginID").prop("checked", false);
+                $(".validation-summary-errors").css("display", "none");
+                $(".input-validation-error").removeClass("input-validation-error");
+                $(".field-validation-error").children().remove();
+                $("P.label-success").remove();
+                $("P.label-warning").remove();
+            });
+            $('#UseEmployeeIDAsLoginID').change(function () {
+                if ($("#UseEmployeeIDAsLoginID").is(":checked")) {
+                    $("#LoginID").val($("#EmployeeID").val());
+                    $("#LoginID").prop('readonly', true).addClass('input-disabled');
+                }
+                else {
+                    $("#LoginID").val('');
+                    $("#LoginID").prop('readonly', false).removeClass('input-disabled');
+                }
+            });
+        });
+    </script>
+}

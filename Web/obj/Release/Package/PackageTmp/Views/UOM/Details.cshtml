@@ -1,0 +1,101 @@
+﻿@model Web.ViewModel.UOMViewModel
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <h2 class="red">Change UOM Details</h2>
+        <hr />
+        <div class="form-group">
+            @Html.Label("CreatedDate", new { @for = "CreatedDate", @class = "control-label col-md-2" })
+            <div class="col-md-1">
+                <input type="radio" name="search" id="CreatedDate" checked="checked" />
+            </div>
+            @Html.Label("UOM Name", new { @for = "ProductID", @class = "control-label col-md-2" })
+            <div class="col-md-1">
+                <input type="radio" name="search" id="ProductID" />
+            </div>
+            <div class="col-md-4">
+                @Html.ActionLink("Advance Search", "", "", new {href="javascript:void(0)"})
+            </div>
+        </div>
+        <div class="form-group" id="dvCreatedBy">
+            @Html.LabelFor(model => model.FromDate, new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.FromDate, new { data_date_format = "mm/dd/yyyy" })
+            </div>
+            @Html.LabelFor(model => model.ToDate, new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.ToDate, new { data_date_format = "mm/dd/yyyy" })
+            </div>
+        </div>
+
+        <div class="form-group hide" id="dvUOM">
+            @Html.LabelFor(model => model.UOMName, new { @class = "control-label col-md-2 red" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.UOMName)
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-10">
+                <input id="btnSearchProduct" type="submit" value="Search" />
+            </div>
+        </div>
+    </div>
+    if (this.Model != null && this.Model.lstUOM != null)
+    {
+    <table>
+        <tr>
+            <th> ID</th>
+            <th>UOM Name </th>
+        </tr>
+        @foreach (var item in this.Model.lstUOM)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.UOMID.ToString(), "Edit", new { id = item.UOMID }) </td>
+                <td>@Html.ActionLink(item.UOMName, "Edit", new { id = item.UOMID }) </td>
+            </tr>
+        }
+    </table>
+    }
+}
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnResetProduct").click(function () {
+                $('input[type="text"]').val('');
+            });
+
+            var startDate = new Date();
+            var FromEndDate = new Date();
+            $('#FromDate').datepicker({
+                format: "mm/dd/yyyy"
+            }).on('changeDate', function (selected) {
+                startDate = new Date(selected.date.valueOf());
+                startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+                $('#ToDate').datepicker('setStartDate', startDate);
+            });
+            $('#ToDate').datepicker({
+                format: "mm/dd/yyyy"
+            }).on('changeDate', function (selected) {
+                FromEndDate = new Date(selected.date.valueOf());
+                FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+                $('#FromDate').datepicker('setEndDate', FromEndDate);
+            });
+            $("#ProductID").click(function () {
+                $("#dvUOM").removeClass("hide");
+                $("#dvCreatedBy").addClass("hide");
+            });
+            $("#CreatedDate").click(function () {
+                $("#dvCreatedBy").removeClass("hide");
+                $("#dvUOM").addClass("hide");
+            });
+        });
+
+    </script>
+}

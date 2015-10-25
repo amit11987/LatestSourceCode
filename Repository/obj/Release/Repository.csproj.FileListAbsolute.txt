@@ -1,0 +1,26 @@
+F:\Matrey\Repository\bin\Release\Repository.dll.config
+F:\Matrey\Repository\bin\Release\Repository.dll
+F:\Matrey\Repository\bin\Release\Repository.pdb
+F:\Matrey\Repository\bin\Release\EntityFramework.dll
+F:\Matrey\Repository\bin\Release\EntityFramework.SqlServer.dll
+F:\Matrey\Repository\bin\Release\Model.dll
+F:\Matrey\Repository\bin\Release\System.Web.Mvc.dll
+F:\Matrey\Repository\bin\Release\EntityFramework.xml
+F:\Matrey\Repository\bin\Release\EntityFramework.SqlServer.xml
+F:\Matrey\Repository\bin\Release\Model.pdb
+F:\Matrey\Repository\obj\Release\Repository.csprojResolveAssemblyReference.cache
+F:\Matrey\Repository\obj\Release\Repository.dll
+F:\Matrey\Repository\obj\Release\Repository.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\Repository.dll.config
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\Repository.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\Repository.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\EntityFramework.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\EntityFramework.SqlServer.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\Model.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\System.Web.Mvc.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\EntityFramework.xml
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\EntityFramework.SqlServer.xml
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\bin\Release\Model.pdb
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\obj\Release\Repository.csprojResolveAssemblyReference.cache
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\obj\Release\Repository.dll
+C:\Users\HP M6\Downloads\Matrey1710\Matrey1710\Matrey\Repository\obj\Release\Repository.pdb

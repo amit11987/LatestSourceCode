@@ -1,0 +1,190 @@
+﻿@model Model.SampleReceive
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form-horizontal">
+        <h2>Sample Receiving</h2>
+          <p id="resultMessage"></p>
+        <div class="form-group">
+            @Html.HiddenFor(model => model.SampleReceiveID)
+            @Html.LabelFor(model => model.SRID, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.SRID)
+                 @Html.Hidden("hdnSRID",this.Model.SRID)
+                @Html.ValidationMessageFor(model => model.SRID)
+            </div>
+        </div>
+        <div class="form-group">
+             @Html.Hidden("hdnNoOfProductReceived",this.Model.NoOfProductReceived)
+            @Html.LabelFor(model => model.NoOfProductReceived, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(model => model.NoOfProductReceived, new { @class = "digit"})
+                <span class="red">Product Received</span>
+            </div>
+        </div>
+        <div id="dvProductReceived" class="form-group">
+            @Html.Partial("~/Views/PartialView/ProductReceived.cshtml")
+        </div>
+        <div class="form-group">
+             @Html.Hidden("hdnNoOfTestRequired",this.Model.NoOfTestRequired)
+            @Html.LabelFor(model => model.NoOfTestRequired, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(model => model.NoOfTestRequired, new { @class = "digit"})
+            </div>
+        </div>
+        <div id="dvSampleTest" class="form-group">
+            @Html.Partial("~/Views/PartialView/SampleTest.cshtml")
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.TargetDate, new { @class = "control-label col-md-3 red",@readonly= "readonly" })
+            <div class="col-md-9">
+                 @Html.Hidden("hdnTargetDate",this.Model.TargetDate)
+                @Html.EditorFor(model => model.TargetDate, new { @class = "datepicker" })
+                @Html.ValidationMessageFor(model => model.TargetDate)
+            </div>
+        </div>
+        <p>
+            <input id="btnEditSampleReceive" type="button" value="Update" />
+            <input id="btnResetSampleReceive" type="button" value="Reset" class="cancel" />
+        </p>
+    </div>
+}
+@section Scripts {
+    <script type="text/javascript">
+        /* This is change event for your dropdownlist */
+        $(document).ready(function () {
+            $('#TargetDate').datepicker({ startDate: new Date(), format: "mm/dd/yyyy" });
+            $("#NoOfProductReceived").val('@ViewBag.NoOfProductReceived');
+            $("#NoOfTestRequired").val('@ViewBag.NoOfTestRequired');
+        });
+
+        $(".digit").keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+
+        $("#NoOfProductReceived").on('keyup',function (e) {
+            EditProductReceivedView($(this).val());
+        });
+
+        $("#NoOfTestRequired").on('keyup', function (e) {
+            EditSampleTestView($(this).val());
+        });
+
+        $(".allownumericwithdecimal").on("keypress keyup blur", function (event) {
+            $(this).val($(this).val().replace(/[^0-9\.]/g, ''));
+            if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+                event.preventDefault();
+            }
+        });
+
+        $("#btnEditSampleReceive").click(function () {
+            if (validate()) {
+                var SampleReceiving = {};
+                SampleReceiving.SampleReceiveID = $("#SampleReceiveID").val();
+                SampleReceiving.SRID = $("#SRID").val();
+                SampleReceiving.NoOfProductReceived = $("#NoOfProductReceived").val();
+                SampleReceiving.NoOfTestRequired = $("#NoOfTestRequired").val();
+                SampleReceiving.TargetDate = new Date($("#TargetDate").val());
+                SampleReceiving.lstProductRecieved = [];
+                for (var i = 0; i < SampleReceiving.NoOfProductReceived; i++) {
+                    var productReceived = {
+                        SampleReceiveID: $("#SampleReceiveID").val(),
+                        ProductRecievedID: $("#lstProductRecieved_" + i + "__ProductRecievedID").val(),
+                        ProductID: $("#lstProductRecieved_" + i + "__ProductID").val(),
+                        Quantity: $("#lstProductRecieved_" + i + "__Quantity").val(),
+                        UOMID: $("#lstProductRecieved_" + i + "__UOMID").val()
+                    }
+                    SampleReceiving.lstProductRecieved.push(productReceived);
+                }
+                SampleReceiving.lstSampleTest = [];
+                for (var i = 0; i < SampleReceiving.NoOfTestRequired; i++) {
+                    var SampleTest = {
+                        SampleReceiveID : $("#SampleReceiveID").val(),
+                        SampleTestID: $("#lstSampleTest_" + i + "__SampleTestID").val(),
+                        TestID: $("#lstSampleTest_" + i + "__TestID").val(),
+                        Repetition: $("#lstSampleTest_" + i + "__Repetition").val()
+                    }
+                    SampleReceiving.lstSampleTest.push(SampleTest);
+                }
+
+                $.ajax({
+                    url: '/SampleReceiving/Edit',
+                    dataType: "json",
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(SampleReceiving),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        EditProductReceivedView('@ViewBag.NoOfProductReceived');
+                        EditSampleTestView('@ViewBag.NoOfTestRequired');
+                        $("#NoOfProductReceived").val('@ViewBag.NoOfProductReceived');
+                        $("#NoOfTestRequired").val('@ViewBag.NoOfTestRequired');
+                        $("#resultMessage").addClass("label-success").show().text('Record updated successfully ');
+                    },
+                    error: function (xhr) {
+                        if (xhr.status == 200) {
+                            EditProductReceivedView('@ViewBag.NoOfProductReceived');
+                            EditSampleTestView('@ViewBag.NoOfTestRequired')
+                            $("#NoOfProductReceived").val('@ViewBag.NoOfProductReceived');
+                            $("#NoOfTestRequired").val('@ViewBag.NoOfTestRequired');
+                            $("#resultMessage").addClass("label-success").show().text('Record updated successfully ');
+                        }
+                        else {
+                            $("#resultMessage").addClass("label-warning").show().text('Error occured ');
+                        }
+                    }
+                })
+            }
+
+         });
+
+        $("#btnResetSampleReceive").click(function () {
+            $("#SRID").val($("#hdnSRID").val());
+            var NoOfProductReceived = $("#hdnNoOfProductReceived").val();
+            $("#NoOfProductReceived").val(NoOfProductReceived);
+            var NoOfTestRequired = $("#hdnNoOfTestRequired").val();
+            $("#NoOfTestRequired").val(NoOfTestRequired);
+            $("#TargetDate").val($("#hdnTargetDate").val());
+            EditProductReceivedView(NoOfProductReceived);
+            EditSampleTestView(NoOfTestRequired)
+            $(".validation-summary-errors").css("display", "none");
+            $(".input-validation-error").removeClass("input-validation-error");
+            $(".field-validation-error").children().remove();
+            $("#resultMessage").removeClass("label-success").removeClass("label-warning").text('').hide();
+          });
+
+
+ 
+        function EditProductReceivedView(noOfProductReceived) {
+            /* Request the partial view with .get request. */
+            $.post('/SampleReceiving/EditProductReceivedview/', { noOfProductReceived: noOfProductReceived, sampleReceiveID : $("#SampleReceiveID").val() }, function (data) {
+                /* data is the pure html returned from action method, load it to your page */
+                $('#dvProductReceived').html(data);
+                /* little fade in effect */
+                $('#dvProductReceived').fadeIn('fast');
+            });
+        }
+
+        function EditSampleTestView(noOfTestRequired) {
+            /* Request the partial view with .get request. */
+            $.post('/SampleReceiving/EditSampleTestview/', { noOfTestParameter: noOfTestRequired, sampleReceiveID: $("#SampleReceiveID").val() }, function (data) {
+                /* data is the pure html returned from action method, load it to your page */
+                $('#dvSampleTest').html(data);
+                /* little fade in effect */
+                $('#dvSampleTest').fadeIn('fast');
+            });
+        }
+    </script>
+}

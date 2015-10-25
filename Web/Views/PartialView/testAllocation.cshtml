@@ -1,0 +1,79 @@
+﻿@model  Web.ViewModel.TestAllocationViewModel
+<table id="tblTestAllocation" style="border-collapse: collapse;">
+    @for (int i = 0; i < this.Model.lstTestAllocation.Count; i++)
+    {
+        int count = i;
+        if (i == 0)
+        {
+        <tr>
+            <th>
+                <span>S.no.</span>
+            </th>
+            <th>
+
+                @Html.LabelFor(model => model.lstTestAllocation[0].TestName)
+            </th>
+            <th>
+                @Html.LabelFor(model => model.lstTestAllocation[0].TargetDate)
+            </th>
+            <th>
+                @Html.LabelFor(model => model.lstTestAllocation[0].Status)
+            </th>
+            <th>
+                @Html.Label("Allocated To")
+            </th>
+            <th>
+                @Html.LabelFor(model => model.lstTestAllocation[0].QtyOfProduct)
+            </th>
+        </tr>
+        }   
+        <tr>
+            <td>
+                @Html.HiddenFor(model => model.lstTestAllocation[i].TestID)
+                @Html.HiddenFor(model => model.lstTestAllocation[i].SampleReceiveID)
+                @Html.HiddenFor(model => model.lstTestAllocation[i].SRID)
+                @Html.Label((count + 1).ToString())
+            </td>
+            <td>
+                @Html.Label(this.Model.lstTestAllocation[i].TestName)
+            </td>
+            <td>
+                @Html.EditorFor(model => model.lstTestAllocation[i].TargetDate)
+            </td>
+            <td>
+                @Html.DropDownListFor(model => model.lstTestAllocation[i].Status, (SelectList)@ViewBag.TestAllocationStatus, new { @class = "dropdown-medium" })
+            </td>
+            <td style="width: 300px;">
+                <label id="lblAllocated@(i)" class="label-small">NA</label>
+                <input type="button" value="allocated" class="allocated" />
+            </td>
+            <td>
+                <div style="width: 300px;">
+                    @Html.TextBoxFor(model => model.lstTestAllocation[i].QtyOfProduct, new { @class = " textbox-small" })
+                     @Html.ValidationMessageFor(model => model.lstTestAllocation[i].QtyOfProduct)
+                    @Html.DropDownListFor(model => model.lstTestAllocation[i].UOMID, (SelectList)@ViewBag.UOMS, new { @class = "dropdown-medium" })
+                </div>
+            </td>
+        </tr> 
+    }
+</table>
+<div id="dvUserGroupDetails" class="modal fade">
+</div>
+<p>
+    <br />
+    <input id="btnTestAllocation" type="Button" value="Submit" />
+    <input id="btnResetAllocation" type="Button" value="Reset" class="cancel" />
+</p>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[type="datetime"]').datepicker({
+            format: "mm/dd/yyyy",
+            startDate: new Date()
+        }); 
+    });
+</script>
+
+
+
+
+

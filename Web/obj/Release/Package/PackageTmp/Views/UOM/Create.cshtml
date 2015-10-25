@@ -1,0 +1,171 @@
+﻿@model Model.UOM
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+     <div id="customValidation">
+    </div>
+    <div class="form-horizontal">
+        <h2>UOM Creation</h2>
+         <p id="resultMessage"></p>
+        @Html.ValidationSummary(true)
+        <div class="form-group">
+            @Html.LabelFor(model => model.UOMName, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.UOMName)
+                @Html.ValidationMessageFor(model => model.UOMName)
+            </div>
+        </div>
+        <div class="form-group" id="dvStandardUOM">
+            @Html.LabelFor(model => model.StandardUOM, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                <select id="StandardUOM" class="dropdown-medium" >
+                    <option>--Select--</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ISStandardUOM, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.CheckBoxFor(model => model.ISStandardUOM)
+            </div>
+        </div>
+         <div class="form-group" id="dvUOMMapping">
+            @Html.LabelFor(model => model.UOMMapping, new { @class = "control-label col-md-3 red" ,@id = "lblUOMMapping"})
+            <div class="col-md-9">
+                  @Html.EditorFor(model => model.UOMMapping)
+                 <span class="red" id="spMapping">= [1 Standard UOM]</span>
+            </div>
+        </div>
+         <p>
+            <input id="btnCreateUOM" type="button" value="Create"   />
+            <input id="btnResetUOM" type="button" value="Reset" class="cancel"  />
+        </p>
+    </div>
+}
+
+@section Scripts {
+    
+<script type="text/javascript">
+    $(document).ready(function () {
+        LoadUOM();
+        $("#ISStandardUOM").change(function () {
+            if ($(this).is(":checked")) {
+                $("#dvStandardUOM").hide();
+                $("#dvUOMMapping").hide();
+            }
+            else {
+                $("#dvStandardUOM").show();
+                $("#dvUOMMapping").show();
+            }
+        });
+
+        $("#StandardUOM").change(function () {
+            $("#spMapping").text("=[1 " +$("#StandardUOM option:selected").text()+ " ]");
+            if ($("#UOMName").val() != "") {
+                $("#lblUOMMapping").text("[1 " + $("#UOMName").val() + " ] *");
+            }
+        });
+
+      
+        $("#UOMName").keyup(function () {
+            $("#UOMName").val() != "" ? $("#lblUOMMapping").text("[1 " + $("#UOMName").val() + " ] *") : $("#lblUOMMapping").text("1 [UOM Name]*");
+        });
+
+       
+        $("#btnCreateUOM").click(function () {
+            if (validate()) {
+                if (!$("#ISStandardUOM").is(":checked") && ('@ViewBag.UOMNames' == null || '@ViewBag.UOMNames' == "")) {
+                    alert("Please first create standard UOM");
+                    return false;
+                }
+                var uom = {
+                    UOMName: $("#UOMName").val(),
+                    StandardUOM : $("#ISStandardUOM").is(":checked")  ?  null : $("#StandardUOM").val(),
+                    ISStandardUOM : $("#ISStandardUOM").is(":checked"),
+                    UOMMapping: $("#ISStandardUOM").is(":checked") ? 0 : $("#UOMMapping").val()
+                };
+           
+                $.ajax({
+                    url: '/UOM/Create',
+                    dataType: "json",
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(uom),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        if (data.errorMessage.length > 0) {
+                            var html = '<div class="validation-summary-errors"><ul>';
+                            $.each(data.errorMessage, function (key, Value) {
+                                html += '<li>' + Value + '</li>';
+                            });
+                            html += '</ul></div>';
+                            $("#customValidation").html(html);
+                        }
+                        else {
+                            LoadUOM();
+                            resetControls();
+                            $("#resultMessage").addClass("label-success").show().text('Record inserted successfully ');
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status == 200) {
+                            LoadUOM();
+                            resetControls();
+                            $("#resultMessage").addClass("label-success").show().text('Record inserted successfully ');
+                        }
+                        else {
+                            $("#resultMessage").addClass("label-warning").show().text('Error occured ');
+                        }
+                    }
+                })
+            }
+        });
+
+        $("#btnResetUOM").click(function () {
+            resetControls();
+            $("#resultMessage").removeClass("label-success").removeClass("label-warning").text('').hide();
+        });
+    });
+
+    function resetControls() {
+        $('input[type="text"]').val('');
+        $("#ISStandardUOM").attr('checked', false);
+        $("#dvStandardUOM").show();
+        $("#dvUOMMapping").show();
+        $("#lblUOMMapping").text("1 [UOM Name]*");
+        $("#spMapping").text("=1[Standard UOM]");
+        $("#StandardUOM").val("0");
+        $(".validation-summary-errors").css("display", "none");
+        $(".input-validation-error").removeClass("input-validation-error");
+        $(".field-validation-error").children().remove();
+    }
+
+    function LoadUOM() {
+        $.ajax({
+            url: "/UOM/LoadUOM",
+            type: "Get",
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var opt;
+                    if (i == 0) {
+                        $('#StandardUOM').empty();
+                        opt = new Option("--Select--", null);
+                        $('#StandardUOM').append(opt);
+                    }
+                    opt = new Option(data[i].UOMName, data[i].UOMID);
+                    $('#StandardUOM').append(opt);
+                }
+            }
+        });
+    }
+
+</script>
+ }
+

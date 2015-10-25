@@ -1,0 +1,194 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+.navbar{
+	height: 61px;
+	/*background-color: #fff;*/
+	background-color: #3F5898;
+	border-bottom: 1px solid #000;
+}
+.navbar-brand{
+
+padding: 0px;
+
+
+}
+
+.jumbotron{
+	margin-top: -10px;
+	margin-bottom: 0px;
+	background-color: #eee4e3;
+	/*height: 740px;*/
+	min-height: 564px;
+}
+
+.form-group p{
+
+	padding-top: 10px;
+}
+
+.user{
+	background-color: #000;
+	padding:  10px 0px 10px 5px;
+	border-radius: 4px;
+	
+}
+.user:hover, .logout:hover {
+    background-color: #303030;
+}
+
+
+.navbar-form{
+	position: relative;
+}
+
+.user .form-group p{
+
+	color: #fff;
+}
+.menu-area{
+	/*background-color: #000;*/
+	background-color: #3F5898;
+	/*min-height: 530px;*/
+	min-height: 563px;
+}
+.menu-area h4{
+	color: #fff;
+	margin-bottom: 20px;
+}
+
+.user-details{
+
+	position: absolute;
+	top: 38px;
+	right: 15px;
+	width: 180px;
+	padding: 10px;
+	border-radius: 4px;	
+	background-color: #d3d3d3;
+	overflow: hidden;
+	display: none;
+}
+
+
+.user-details ul{
+	padding-left: 0px;
+
+}
+
+.user-details ul li{
+
+	
+	list-style-type: none;
+	padding-left: 5px;
+}
+.user-details ul li a{
+
+	
+	color:#000;
+	padding: 5px 0px;
+	text-decoration: none;
+
+}
+
+.user-details ul li:hover{
+
+	background-color: #fff;
+}
+
+.logout{
+	width: 20px;
+	background-color: #000;
+	padding:  10px 3px 10px 5px;
+	margin-left: 10px;
+	border-radius: 4px;
+}
+
+.menu-links{
+	padding-left: 0px;
+}
+
+.menu-links li{
+	list-style-type: none;
+	width: 100%;
+	
+}
+
+.menu-links li a{
+	max-width: 100%;
+	display: block;
+	padding: 5px;
+	border-bottom: 1px solid #ccc;
+	text-decoration: none;
+	color: #fff;
+}
+
+.frequent-links{
+	padding-left: 0px;
+}
+
+
+.frequent-links  li{
+	list-style-type: none;
+	width: 100%;
+	
+}
+
+.frequent-links li a{
+	max-width: 100%;
+	display: block;
+	padding: 5px;
+	border-bottom: 1px solid #ccc;
+	text-decoration: none;
+
+color: #000;
+	}
+
+.menu-links li a:hover{
+	background-color: #fff;
+	color: #000;
+}
+
+.frequent-links li a:hover{
+	background-color: #000;
+	color: #fff;
+}
+
+.content-area{
+	margin-top: 15px;
+}
+
+footer{
+
+	/*background-color: #ccc;*/
+	background-color: #3F5898;
+	color: #fff;
+}
+.checkboxer{
+	font-size: 12px;
+}
+
+.margin30{
+	margin-top: 30px;
+}
+.marginb20
+{
+	margin-bottom: 20px;
+}
+
+@media screen and (min-width: 768px){
+.jumbotron {
+    padding: 0;
+}
+}
+
+
+
+
+
+
+
+

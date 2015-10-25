@@ -1,0 +1,140 @@
+﻿@model Model.Test
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+     <div class="form-horizontal"> 
+          @Html.HiddenFor(model => model.TestID)  
+        <h2> Edit Test Details</h2>
+           <p id="resultMessage"></p>
+        <div class="form-group">
+            @Html.Hidden("hdnTestName",this.Model.TestName)
+            @Html.LabelFor(model => model.TestName, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.TestName)
+                @Html.ValidationMessageFor(model => model.TestName)
+            </div>
+        </div>
+       <div class="form-group">
+           @Html.Hidden("hdnTID",this.Model.TID)
+            @Html.LabelFor(model => model.TID, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(model => model.TID)
+                @Html.ValidationMessageFor(model => model.TID)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Hidden("hdnTestDescription",this.Model.TestDescription)
+            @Html.LabelFor(model => model.TestDescription, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.TextAreaFor(model => model.TestDescription, new { rows = "6", cols = "50" })
+                @Html.ValidationMessageFor(model => model.TestDescription)
+            </div>
+        </div>
+          <div class="form-group">
+            @Html.Hidden("hdnNumberOfParametersRequired",this.Model.NumberOfParametersRequired)
+            @Html.LabelFor(model => model.NumberOfParametersRequired, new { @class = "control-label col-md-3 red" })
+            <div class="col-md-9">
+                @Html.DropDownListFor(model => model.NumberOfParametersRequired, Enumerable.Range(1, (int)@ViewBag.MaxNoOfTestParameter).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = (i == (int)@ViewBag.NumberOfParametersRequired) }), new { @class = "dropdown-medium" })
+                @Html.ValidationMessageFor(model => model.NumberOfParametersRequired)
+            </div>
+        </div>
+       <div id="view" class="form-group">
+            @Html.Partial("~/Views/PartialView/testParameter.cshtml")
+         </div>
+        <p>
+            <input id="btnEditTest" type="button" value="Update"   />
+            <input id="btnResetTest" type="button" value="Reset" class="cancel"  />
+        </p>
+   </div>
+}
+
+@section Scripts {
+<script type="text/javascript">
+    /* This is change event for your dropdownlist */
+    $(document).ready(function () {
+        $('#NumberOfParametersRequired').change(function () { 
+            CreateTestParameterView($(this).val());
+        });
+
+        function CreateTestParameterView(noOfTestParameter) {
+            /* Request the partial view with .get request. */
+            $.post('/Test/EditRenderview/', { noOfTestParameter: noOfTestParameter, testID: $("#TestID").val() }, function (data) {
+                /* data is the pure html returned from action method, load it to your page */
+                $('#view').html(data);
+                /* little fade in effect */
+                $('#view').fadeIn('fast');
+            });
+        }
+
+        $("#btnResetTest").click(function () {
+            $("#TestName").val($("#hdnTestName").val());
+            $("#TID").val($("#hdnTID").val());
+            $("#TestDescription").val($("#hdnTestDescription").val());
+            var numberOfParametersRequired = $("#hdnNumberOfParametersRequired").val();
+            $("#NumberOfParametersRequired").val(numberOfParametersRequired);
+            CreateTestParameterView(numberOfParametersRequired);
+            $(".validation-summary-errors").css("display", "none");
+            $(".input-validation-error").removeClass("input-validation-error");
+            $(".field-validation-error").children().remove();
+            $("#resultMessage").removeClass("label-success").removeClass("label-warning").text('').hide();
+        });
+
+        $("#btnEditTest").click(function () {
+            if (validate()) {
+                var test = {};
+                test.TestID = $("#TestID").val();
+                test.TestName = $("#TestName").val();
+                test.TID = $("#TID").val();
+                test.TestDescription = $("#TestDescription").val();
+                test.NumberOfParametersRequired = $("#NumberOfParametersRequired").val();
+                test.TestParameters = [];
+                for (var i = 0; i < test.NumberOfParametersRequired; i++) {
+                    var testparameter = {
+                        TestID : $("#TestID").val(),
+                        TestParameterID: $("#TestParameters_" + i + "__TestParameterID").val(),
+                        Caption: $("#TestParameters_" + i + "__Caption").val(),
+                        TPID: $("#TestParameters_" + i + "__TPID").val(),
+                        Description: $("#TestParameters_" + i + "__Description").val(),
+                        FieldTypeID: $("#TestParameters_" + i + "__FieldTypeID").val()
+                    }
+                    test.TestParameters.push(testparameter);
+                }
+
+                $.ajax({
+                    url: '/Test/Edit',
+                    dataType: "json",
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(test),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        $("#NumberOfParametersRequired").val('@ViewBag.NumberOfParametersRequired');
+                        $("#resultMessage").addClass("label-success").show().text('Record updated successfully');
+                    },
+                    error: function (xhr) {
+                        if (xhr.status == 200) {
+                            $("#NumberOfParametersRequired").val('@ViewBag.NumberOfParametersRequired');
+                            $("#resultMessage").addClass("label-success").show().text('Record updated successfully ');
+                        }
+                        else {
+                            $("#resultMessage").addClass("label-warning").show().text('Error occured ');
+                        }
+                    }
+                })
+            }
+
+        });
+
+    });
+</script>
+
+}

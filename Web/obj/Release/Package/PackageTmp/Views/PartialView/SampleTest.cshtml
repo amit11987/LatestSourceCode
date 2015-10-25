@@ -1,0 +1,46 @@
+﻿@model Model.SampleReceive
+    <table style="border-collapse: collapse;">
+        @for (int i = 0; i < @ViewBag.NoofTestRequired; i++)
+        {
+            int count = i;
+            if (i == 0)
+            {
+              <tr>
+               <th>
+                   <span>S.no.</span>
+                </th>
+                <th> 
+                    @Html.LabelFor(model =>  model.lstSampleTest[0].TestID)
+                </th>
+                  <th>
+                    @Html.LabelFor(model => model.lstSampleTest[0].Repetition, new { @class="ProductName"})
+                </th>
+              </tr>
+            }   
+            <tr>
+                <td>
+                    @Html.Label((count+1).ToString())
+                     @Html.HiddenFor(model => model.lstSampleTest[i].SampleTestID)
+                </td>
+                <td>
+                    @if (this.Model != null && this.Model.lstSampleTest[i].SampleReceiveID > 0)
+                    {
+                        @Html.DropDownListFor(model =>  model.lstSampleTest[i].TestID, (@ViewBag.Tests as IEnumerable<SelectListItem>).AsEnumerable().Select(p => new SelectListItem { Value = p.Value , Text = p.Text.ToString(), Selected = (p.Value.ToString() == this.Model.lstSampleTest[i].TestID.ToString()) }), new { @class = "dropdown-medium fieldType" })
+                    }
+                    else
+                    {
+                         @Html.DropDownListFor(model => model.lstSampleTest[i].TestID,(SelectList)@ViewBag.Tests,new {@class = "dropdown-medium" }) 
+                    }
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.lstSampleTest[i].Repetition, new  {@class="digit" })
+                </td>
+            </tr> 
+        }
+    </table>
+
+
+
+    
+
+
